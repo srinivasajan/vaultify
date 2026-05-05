@@ -4,414 +4,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vaultify — Your Files, Your Format, Your Rules</title>
-  <meta name="description"
-    content="Encrypt any file into a custom format with your own extension. Only you can open it. Works completely offline." />
+  <title>Vaultify | Secure Offline File Encryption & Steganography</title>
+  
+  <!-- Basic SEO -->
+  <meta name="description" content="Vaultify is a military-grade, 100% offline file encryption tool. Encrypt files into custom formats, hide secrets inside PNG images using steganography, and instantly self-destruct decrypted data from memory. No servers, no tracking, complete privacy." />
+  <meta name="keywords" content="offline file encryption, browser encryption, steganography tool, hide files in images, AES-256-GCM, PBKDF2 encryption, secure file sharing, zero-knowledge encryption, client-side encryption, self-destructing files" />
+  <meta name="author" content="Srinivasa Jangiti" />
+  <link rel="canonical" href="https://vaultify.com" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vaultify.com" />
+  <meta property="og:title" content="Vaultify | Secure Offline File Encryption" />
+  <meta property="og:description" content="100% offline AES-256-GCM file encryption. Turn any file into a custom format, or hide it inside an image using Steganography. Zero servers involved." />
+  <meta property="og:image" content="https://vaultify.com/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://vaultify.com" />
+  <meta property="twitter:title" content="Vaultify | Secure Offline File Encryption" />
+  <meta property="twitter:description" content="100% offline AES-256-GCM file encryption. Turn any file into a custom format, or hide it inside an image using Steganography." />
+  <meta property="twitter:image" content="https://vaultify.com/og-image.jpg" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Vaultify",
+    "url": "https://vaultify.com",
+    "description": "A 100% offline browser-based utility for military-grade file encryption, decryption, and image steganography using AES-256-GCM.",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "Srinivasa Jangiti"
+    }
+  }
+  </script>
+  
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="theme-color" content="#000000" />
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
-  <style>
-    :root {
-      --bg:       #f4f0ea;
-      --bg2:      #e9e4dc;
-      --surface:  #ffffff;
-      --surface2: #f4f0ea;
-      --border:   #000000;
-      --border2:  #000000;
-      --accent:   #ff5722;
-      --accent-hover: #e64a19;
-      --accent-text: #ffffff;
-      --accent2:  #8b5cf6;
-      --teal:     #10b981;
-      --pink:     #ec4899;
-      --text:     #000000;
-      --text2:    #333333;
-      --text3:    #666666;
-      --green:    #10b981;
-      --red:      #ef4444;
-      --yellow:   #eab308;
-      --radius:   0px;
-      --radius-sm:0px;
-      --shadow:   6px 6px 0px #000;
-      --shadow-hover: 2px 2px 0px #000;
-    }
-
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-
-    body {
-      font-family:'Space Mono', monospace;
-      background-color: var(--bg);
-      color:var(--text);
-      min-height:100vh;
-      overflow-x:hidden;
-    }
-
-    /* ── BG ── */
-    .bg-mesh {
-      display:none;
-    }
-    .grid-overlay {
-      display:block;
-      position:fixed;inset:0;z-index:0;pointer-events:none;
-      background-image: radial-gradient(#000 1px, transparent 1px);
-      background-size: 24px 24px;
-      opacity: 0.05;
-    }
-
-    /* ── NAV ── */
-    nav {
-      position:sticky;top:0;z-index:100;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:1.2rem 2.5rem;
-      background:var(--surface);
-      border-bottom:3px solid var(--border);
-    }
-    .logo {
-      display:flex;align-items:center;
-      font-weight:700;font-size:1.5rem;letter-spacing:-1px;
-      text-transform: uppercase;
-    }
-    .logo span{color:var(--accent); font-weight: 700;}
-    .nav-tabs{display:flex;gap:.5rem}
-    .nav-tab {
-      padding:.5rem 1.2rem;border:2px solid transparent;
-      background:transparent;
-      color:var(--text);cursor:pointer;
-      font-family:'Space Mono', monospace;font-size:.9rem;font-weight:700;
-      transition:all .1s;display:flex;align-items:center;gap:.4rem;
-      text-transform: uppercase;
-    }
-    .nav-tab:hover{border:2px solid var(--border); background:var(--bg2);}
-    .nav-tab.active{border:2px solid var(--border); background:var(--accent); color: #fff; box-shadow: 2px 2px 0px #000;}
-    .nav-badge{font-size:.65rem;background:var(--teal);color:#000;padding:.1rem .35rem;border:2px solid #000;font-weight:700}
-
-    /* ── MAIN ── */
-    main{position:relative;z-index:1}
-
-    /* ── HERO ── */
-    .hero {
-      padding:6rem 2.5rem 5rem;
-      max-width:1100px;margin:0 auto;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .hero-chip {
-      display:inline-flex;align-items:center;gap:.45rem;
-      background:var(--surface);border:2px solid var(--border);
-      color:var(--text);padding:.5rem 1rem;
-      font-size:.8rem;font-weight:700;margin-bottom:2.5rem;
-      box-shadow: 3px 3px 0px #000;
-      text-transform: uppercase;
-    }
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-    .hero h1 {
-      font-size:clamp(3rem,7vw,6.5rem);
-      font-weight:700;line-height:0.95;
-      letter-spacing:-3px;margin-bottom:2rem;
-      max-width:1000px;
-      text-transform: uppercase;
-    }
-    .hero h1 .grad {
-      display: inline-block;
-      background: var(--accent);
-      color: #fff;
-      padding: 0 15px;
-      border: 4px solid var(--border);
-      box-shadow: 8px 8px 0px #000;
-      transform: rotate(-2deg);
-      margin-top: 15px;
-      -webkit-text-fill-color: initial;
-    }
-    .hero p {
-      color:var(--text2);font-size:1.2rem;max-width:600px;
-      line-height:1.6;margin-bottom:3.5rem;
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-    }
-    /* Stats as a horizontal bordered row */
-    .hero-stats {
-      display:inline-grid;
-      grid-template-columns:repeat(4,1fr);
-      border:3px solid var(--border);
-      background:var(--surface);
-      box-shadow: var(--shadow);
-    }
-    .hero-stat {
-      padding:1.5rem 2rem;
-      border-right:3px solid var(--border);
-      text-align:left;
-    }
-    .hero-stat:last-child{border-right:none}
-    .hero-stat .val {
-      font-size:1.8rem;font-weight:700;
-      color:var(--text);display:block;margin-bottom:.3rem;
-      letter-spacing: -1px;
-    }
-    .hero-stat .lbl {
-      font-size:.8rem;color:var(--text3);
-      font-weight:700;
-      text-transform: uppercase;
-    }
-
-    /* ── SECTION ── */
-    .section{max-width:860px;margin:0 auto;padding:0 2rem 5rem}
-
-    /* ── PAGES ── */
-    .page{display:none}
-    .page.active{display:block}
-
-    /* ── CARD: simple modern panel ── */
-    .card {
-      background: var(--surface);
-      border:3px solid var(--border);
-      padding:3rem 3.5rem;
-      box-shadow: var(--shadow);
-    }
-    .card-title {
-      font-size:1.6rem;font-weight:700;margin-bottom:.5rem;
-      display:flex;align-items:center;gap:.75rem;letter-spacing:-1px;
-      text-transform: uppercase;
-    }
-    .card-title .icon {
-      width:40px;height:40px;
-      display:grid;place-items:center;
-      background:var(--accent);
-      border:2px solid var(--border);
-      box-shadow: 2px 2px 0px #000;
-    }
-    .card-sub{color:var(--text2);font-size:1rem;margin-bottom:2.5rem;line-height:1.6; font-family: 'Inter', sans-serif; font-weight: 500;}
-
-    /* ── STEPS: horizontal flow ── */
-    .steps {
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-      gap:.8rem;margin-bottom:3rem;
-    }
-    .step {
-      background:var(--bg2);border:2px solid var(--border);
-      padding:1.2rem;
-      display:flex;flex-direction: column; gap:.7rem;
-      box-shadow: 3px 3px 0px #000;
-    }
-    .step-num {
-      width:28px;height:28px;flex-shrink:0;
-      background:var(--accent);display:grid;place-items:center;
-      font-size:.85rem;font-weight:700; color: #fff;
-      border:2px solid var(--border);
-    }
-    .step-info .step-t{font-weight:700;font-size:1rem; text-transform: uppercase;}
-    .step-info .step-d{color:var(--text3);font-size:.85rem;margin-top:.4rem;line-height:1.5; font-family: 'Inter', sans-serif; font-weight: 500;}
-
-    /* ── DROP ZONE ── */
-    .drop-zone {
-      border:3px dashed var(--border);
-      padding:4rem 1.5rem;
-      text-align:center;cursor:pointer;transition:all .1s;
-      position:relative;background:var(--bg2);
-    }
-    .drop-zone:hover,.drop-zone.drag-over {
-      background:var(--yellow);
-      border-style: solid;
-    }
-    .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-    .drop-icon{margin-bottom:.6rem; color: #000;}
-    .drop-title{font-size:1.1rem;font-weight:700;margin-bottom:.25rem; text-transform: uppercase;}
-    .drop-hint{font-size:.85rem;color:var(--text3); font-family: 'Inter', sans-serif; font-weight: 500;}
-
-    /* ── FIELDS ── */
-    .field-group{margin-bottom:1.5rem}
-    .field-group label {
-      display:flex;align-items:center;gap:.4rem;
-      font-size:.9rem;font-weight:700;color:var(--text);
-      margin-bottom:.6rem; text-transform: uppercase;
-    }
-    .field-row{display:flex;gap:.6rem;align-items:stretch}
-    .ext-prefix {
-      background:var(--bg2);border:2px solid var(--border);
-      padding:0 1rem;display:flex;align-items:center;
-      color:var(--text);font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;
-      white-space:nowrap;flex-shrink:0;
-      box-shadow: 2px 2px 0px #000;
-    }
-    input[type=text],input[type=password] {
-      width:100%;background:var(--surface);
-      border:2px solid var(--border);
-      padding:.8rem 1.2rem;color:var(--text);
-      font-family:'Space Mono', monospace;font-size:1rem;font-weight:700;
-      outline:none;transition:all .1s;
-      box-shadow: 2px 2px 0px #000 inset;
-    }
-    input[type=text]:focus,input[type=password]:focus {
-      background:var(--bg2);
-      box-shadow: 4px 4px 0px #000;
-    }
-    input::placeholder{color:var(--text3)}
-    .ext-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-    .ext-chip {
-      padding:.3rem .7rem;border-radius:6px;
-      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
-      color:var(--text2);font-size:.8rem;
-      cursor:pointer;transition:all .15s;
-    }
-    .ext-chip:hover{background:rgba(255,255,255,0.08);color:var(--text)}
-
-    /* ── PW STRENGTH ── */
-    .pw-strength-bar{height:6px;background:var(--bg2);border:2px solid var(--border);border-radius:0px;margin-top:.5rem;overflow:hidden;box-shadow: 2px 2px 0px #000 inset;}
-    .pw-strength-fill{height:100%;border-radius:0px;transition:width .3s,background .3s;width:0%;background:var(--text2);border-right:2px solid var(--border);}
-    .pw-strength-label{font-size:.75rem;color:var(--text);margin-top:.3rem;font-weight:700;text-transform:uppercase;}
-
-    /* ── BUTTONS ── */
-    .btn {
-      display:inline-flex;align-items:center;justify-content:center;
-      gap:.5rem;padding:.9rem 1.8rem;
-      border: 3px solid #000;
-      border-radius:0;
-      cursor:pointer;
-      font-family:'Space Mono', monospace;font-size:1rem;font-weight:700;
-      transition:all .1s;text-decoration:none;
-      box-shadow: 4px 4px 0px #000;
-      text-transform: uppercase;
-    }
-    .btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px #000;
-    }
-    .btn-primary {
-      background:var(--accent);color:#fff;
-    }
-    .btn-primary:hover:not(:disabled){background:var(--accent-hover);}
-    .btn-teal{background:var(--surface);color:#000;}
-    .btn-teal:hover:not(:disabled){background:var(--bg2);}
-    .btn-full{width:100%}
-    .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
-
-    /* ── PROGRESS ── */
-    .progress-wrap {
-      background:var(--surface);border:2px solid #000;
-      border-radius:0;padding:1rem 1.2rem;margin-top:1.2rem;display:none;
-      box-shadow: 2px 2px 0px #000;
-    }
-    .progress-wrap.show{display:block}
-    .progress-label{font-size:.9rem;font-weight:700;margin-bottom:.5rem;color:var(--text);text-transform: uppercase;}
-    .progress-bar-bg{background:var(--bg2);border:2px solid #000;height:12px;overflow:hidden;}
-    .progress-bar-fill{height:100%;background:#000;transition:width .4s;width:0%}
-    .progress-info{font-size:.8rem;color:var(--text3);margin-top:.4rem;font-family:'Space Mono', monospace;font-weight:700;}
-
-    /* ── RESULT ── */
-    .result-box {
-      background:var(--surface);border:2px solid #000;
-      border-radius:0;padding:1.5rem 1.4rem;
-      margin-top:1.2rem;display:none;
-      box-shadow: 4px 4px 0px #000;
-    }
-    .result-box.show{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
-    .result-icon{flex-shrink:0;}
-    .result-info{flex:1;min-width:180px}
-    .result-info .r-title{font-weight:700;color:var(--text);font-size:1.1rem;text-transform:uppercase;}
-    .result-info .r-sub{font-size:.9rem;color:var(--text3);margin-top:.2rem;font-family:'Inter', sans-serif;}
-    .result-filename{font-family:'Space Mono',monospace;font-size:.9rem;color:#fff;background:#000;border:none;padding:.25rem .55rem;margin-top:.6rem;display:inline-block; font-weight:700;}
-
-    /* ── ERROR ── */
-    .error-box{background:#fff0f0;border:2px solid var(--red);padding:.85rem 1.1rem;color:var(--red);font-size:.9rem;margin-top:1rem;display:none;align-items:center;gap:.5rem;box-shadow: 2px 2px 0px var(--red); font-weight:700; font-family:'Space Mono', monospace;}
-    .error-box.show{display:flex}
-
-    /* ── FORMAT GUIDE ── */
-    .format-guide{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin-top:1.5rem}
-    .format-guide-title{font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
-    .format-bytes{display:flex;gap:.3rem;flex-wrap:wrap}
-    .byte-block{padding:.4rem .6rem;border-radius:4px;font-family:'Space Mono',monospace;font-size:.7rem;text-align:center;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
-    .byte-block .bval{font-weight:600;color:var(--text)}
-    .byte-block .blbl{font-size:.65rem;margin-top:.2rem}
-
-    /* ── VIEWER ── */
-    .viewer-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:1.2rem;display:none;overflow:hidden}
-    .viewer-wrap.show{display:block}
-    .viewer-toolbar{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;border-bottom:1px solid var(--border);background:var(--surface2)}
-    .viewer-file-info{font-size:.8rem}
-    .viewer-file-info .fname{font-family:'Space Mono',monospace;color:var(--text);font-weight:600}
-    .viewer-file-info .fsize{color:var(--text3);font-size:.75rem;margin-top:.2rem}
-    .viewer-actions{display:flex;gap:.45rem}
-    .viewer-content{padding:1rem;min-height:200px;max-height:60vh;overflow:auto}
-    .viewer-content img{max-width:100%;border-radius:6px;display:block;margin:auto}
-    .viewer-content video,.viewer-content audio{width:100%;border-radius:6px}
-    .viewer-content iframe{width:100%;height:58vh;border:none;border-radius:6px}
-    .viewer-content pre{font-family:'Space Mono',monospace;font-size:.8rem;line-height:1.65;color:var(--text2);white-space:pre-wrap;word-break:break-word}
-    .viewer-msg{text-align:center;padding:2rem;color:var(--text3)}
-    .viewer-msg .vm-icon{margin-bottom:.6rem}.viewer-msg .vm-text{font-size:.85rem}
-
-    /* ── INFO PAGE ── */
-    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.75rem;margin-top:1.5rem}
-    .info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem}
-    .info-card h3{font-size:.95rem;font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.45rem;color:var(--text)}
-    .info-card p{font-size:.85rem;color:var(--text2);line-height:1.6}
-    .warn-card h3{color:var(--red)}
-
-    /* ── FOOTER ── */
-    footer{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:.8rem;border-top:1px solid var(--border);line-height:2;margin-top:4rem}
-    footer span{color:var(--text)}
-    footer .dev-info{margin-top:.6rem;display:flex;justify-content:center;align-items:center;gap:1.25rem;flex-wrap:wrap;font-size:.8rem}
-    footer .dev-info a{color:var(--text2);text-decoration:none;transition:color .15s}
-    footer .dev-info a:hover{color:var(--text)}
-    footer .dev-badge{display:inline-flex;align-items:center;gap:.35rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.3rem .75rem;color:var(--text2)}
-    footer .dev-badge svg{width:14px;height:14px;color:var(--text3);flex-shrink:0}
-
-    /* ── UTILITIES ── */
-    .divider{height:1px;background:var(--border);margin:1.5rem 0}
-    .mono{font-family:'Space Mono',monospace}
-    .tag{display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .6rem;border-radius:6px;font-size:.7rem;font-weight:600;letter-spacing:.2px;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
-
-    /* ── TOAST ── */
-    #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.8rem 1.2rem;color:var(--text);font-size:.85rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.3);z-index:9999;transform:translateY(100px);opacity:0;transition:all .25s;pointer-events:none;display:flex;align-items:center;gap:.5rem;max-width:300px;font-family:'Inter',sans-serif}
-    #toast.show{transform:translateY(0);opacity:1}
-
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar{width:6px;height:6px}
-    ::-webkit-scrollbar-track{background:var(--bg)}
-    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-    .fade-in{animation:fadeIn .35s ease forwards}
-
-    /* ── MARQUEE ── */
-    @keyframes marqueeMove {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .marquee {
-      background: var(--accent);
-      color: #fff;
-      padding: 0.5rem 0;
-      overflow: hidden;
-      white-space: nowrap;
-      border-bottom: 3px solid #000;
-      font-size: 0.95rem;
-      font-weight: 700;
-      position: relative;
-      display: flex;
-    }
-    .marquee-inner {
-      display: flex;
-      animation: marqueeMove 20s linear infinite;
-    }
-    .marquee-item {
-      padding: 0 2rem;
-      text-transform: uppercase;
-    }
-
-    @media(max-width:640px){
-      nav{padding:.75rem 1rem}
-      .nav-tab{padding:.4rem .7rem;font-size:.78rem}
-      .hero{padding:3.5rem 1rem 2.5rem}
-      .hero h1{letter-spacing:-1.5px}
-      .hero-stats{grid-template-columns:repeat(2,1fr)}
-      .section{padding:0 1rem 4rem}
-      .card{padding:1.5rem}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- fflate for client-side zip -->
+  <script src="fflate.min.js"></script>
 </head>
 
 <body>
@@ -419,12 +67,25 @@
   <div class="bg-mesh"></div>
   <div class="grid-overlay"></div>
 
+  <!-- GLOBAL DROP ZONE -->
+  <div id="global-drop-zone" class="global-drop-zone">
+    <div class="gdz-content">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px;height:64px;margin-bottom:1rem;color:var(--primary);">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+      <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Drop File Here</h2>
+      <p style="color: var(--text2); font-size: 1.1rem;">Vaultify will automatically detect if it needs encryption or decryption.</p>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div id="toast"></div>
 
   <!-- NAV -->
   <nav>
-    <div class="logo">
+    <div class="logo" style="cursor:pointer;" onclick="switchPage('home')">
       Vault<span>ify</span>
     </div>
     <div class="nav-tabs">
@@ -454,27 +115,21 @@
         </svg>
         How it Works
       </button>
+      <button class="nav-tab" onclick="toggleHistory()" id="tab-history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        History
+      </button>
+      <button class="btn btn-teal" id="theme-toggle" onclick="toggleTheme()" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 1rem;" title="Toggle Dark Mode">
+        🕶️ Dark Mode
+      </button>
     </div>
   </nav>
 
-  <!-- MARQUEE TICKER -->
-  <div class="marquee">
-    <div class="marquee-inner">
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <!-- Duplicated for seamless scrolling -->
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-      <div class="marquee-item">100% SECURE • NO SERVERS • NO TRACKING • LOCAL ONLY</div>
-    </div>
-  </div>
-
   <main>
-
-    <!-- HERO (shown only on first load) -->
+    <!-- HERO -->
     <div class="hero" id="hero-section">
       <div class="hero-chip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -493,20 +148,20 @@
           style="color:var(--text)">.secretstash</span> — and only <em>you</em> can open it.</p>
       <div class="hero-stats">
         <div class="hero-stat">
-          <div class="val">AES-256</div>
-          <div class="lbl">Encryption Standard</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val">0 KB</div>
-          <div class="lbl">Uploaded to Server</div>
-        </div>
-        <div class="hero-stat">
-          <div class="val">∞</div>
-          <div class="lbl">Custom Extensions</div>
+          <div class="val">AES-GCM</div>
+          <div class="lbl">Encryption</div>
         </div>
         <div class="hero-stat">
           <div class="val">100%</div>
           <div class="lbl">Offline Capable</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val">ZIP</div>
+          <div class="lbl">Folder Support</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val">P2P</div>
+          <div class="lbl">Direct Sharing</div>
         </div>
       </div>
     </div>
@@ -525,40 +180,8 @@
           Encrypt a File
           <span class="tag tag-accent">Step 1 of 1</span>
         </div>
-        <p class="card-sub">Choose any file (PDF, Word, MP4, image, etc.), set your secret password, pick a custom
+        <p class="card-sub">Choose any file or multiple files, set your secret password, pick a custom
           extension — download your vault file.</p>
-
-        <div class="steps">
-          <div class="step">
-            <div class="step-num">1</div>
-            <div class="step-info">
-              <div class="step-t">Pick a file</div>
-              <div class="step-d">Any format supported — PDF, DOCX, MP4, PNG, ZIP…</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">2</div>
-            <div class="step-info">
-              <div class="step-t">Set your extension</div>
-              <div class="step-d">Create a unique format name like <span class="mono"
-                  style="color:var(--text)">.yowtf</span></div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">3</div>
-            <div class="step-info">
-              <div class="step-t">Strong password</div>
-              <div class="step-d">This is your one and only key. Never share it.</div>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-num">4</div>
-            <div class="step-info">
-              <div class="step-t">Download vault</div>
-              <div class="step-d">Save your encrypted vault file anywhere.</div>
-            </div>
-          </div>
-        </div>
 
         <!-- Drop Zone -->
         <div class="field-group">
@@ -567,19 +190,19 @@
               stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
             </svg>
-            Source File
+            Source File(s)
           </label>
           <div class="drop-zone" id="enc-drop" ondragover="handleDrag(event,'enc-drop')"
             ondragleave="handleDragLeave(event,'enc-drop')" ondrop="handleDrop(event,'enc')">
-            <input type="file" id="enc-file-input" onchange="handleEncFileChange()" />
+            <input type="file" id="enc-file-input" onchange="handleEncFileChange(event)" multiple />
             <div class="drop-icon" id="enc-drop-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                 stroke-linejoin="round" style="width:40px;height:40px;color:var(--text3);">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
               </svg>
             </div>
-            <div class="drop-title" id="enc-drop-title">Drop any file here or click to browse</div>
-            <div class="drop-hint" id="enc-drop-hint">PDF, DOCX, MP4, MP3, PNG, ZIP, and more</div>
+            <div class="drop-title" id="enc-drop-title">Drop any file or folder here</div>
+            <div class="drop-hint" id="enc-drop-hint">Multiple files will be automatically zipped before encryption.</div>
           </div>
         </div>
 
@@ -602,10 +225,15 @@
             <span class="ext-chip" onclick="setExt('iamboss')">.iamboss</span>
             <span class="ext-chip" onclick="setExt('secretstash')">.secretstash</span>
             <span class="ext-chip" onclick="setExt('myvault')">.myvault</span>
-            <span class="ext-chip" onclick="setExt('hello')">.hello</span>
-            <span class="ext-chip" onclick="setExt('wtfisthis')">.wtfisthis</span>
-            <span class="ext-chip" onclick="setExt('classified')">.classified</span>
-            <span class="ext-chip" onclick="setExt('nopenottoday')">.nopenottoday</span>
+          </div>
+          <div style="margin-top: 1rem;">
+            <label style="display:flex;align-items:center;gap:0.5rem;font-weight:bold;cursor:pointer;background:var(--surface2);padding:0.75rem;border:1px solid var(--border);border-radius:8px;">
+              <input type="checkbox" id="enc-stego" onchange="toggleStego(this.checked)" style="width:16px;height:16px;">
+              <span>🖼️ Steganography Mode (Hide inside a PNG image)</span>
+            </label>
+            <div id="stego-desc" style="display:none;font-size:0.8rem;color:var(--text2);margin-top:0.5rem;">
+              When enabled, your encrypted vault will be appended to a normal-looking PNG file. It will look and act like a picture, but can be decrypted by dropping it back into Vaultify.
+            </div>
           </div>
         </div>
 
@@ -622,7 +250,7 @@
           <div class="field-row">
             <input type="password" id="enc-pw" placeholder="Enter a strong password..."
               oninput="updateStrength(this.value)" />
-            <button class="btn btn-outline" style="flex-shrink:0;padding: 0 1rem;font-size:1.2rem;" onclick="generatePassword()" title="Generate Secure Password">
+            <button class="btn btn-teal" style="flex-shrink:0;padding: 0 1rem;font-size:1.2rem;" onclick="generatePassword()" title="Generate Secure Password">
               🎲
             </button>
             <button class="btn btn-primary" style="flex-shrink:0;padding:.7rem 1rem;" onclick="togglePw('enc-pw', this)"
@@ -637,24 +265,41 @@
           <div class="pw-strength-bar">
             <div class="pw-strength-fill" id="pw-fill"></div>
           </div>
-          <div class="pw-strength-label" id="pw-label">Enter a password</div>
+          <div style="display:flex; justify-content:space-between;">
+            <div class="pw-strength-label" id="pw-label">Enter a password</div>
+            <div class="pw-strength-label" id="pw-entropy" style="color:var(--text3)"></div>
+          </div>
         </div>
 
-        <!-- Confirm Password -->
         <div class="field-group">
-          <label>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;">
-              <path
-                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-            </svg>
-            Confirm Password
-          </label>
           <input type="password" id="enc-pw2" placeholder="Re-enter your password..." />
         </div>
+        
+        <!-- Advanced Settings Toggle -->
+        <details class="adv-settings">
+          <summary>⚙️ Advanced Crypto Settings</summary>
+          <div class="adv-panel">
+            <div class="field-group">
+              <label>PBKDF2 Iterations</label>
+              <input type="number" id="adv-iters" value="250000" min="100000" step="50000" />
+              <div style="font-size:0.75rem; color:var(--text3); margin-top:4px;">Higher = more secure but slower.</div>
+            </div>
+            <div class="field-group">
+              <label>Salt Length (bytes)</label>
+              <input type="number" id="adv-salt" value="32" min="16" max="64" />
+            </div>
+            <div class="field-group">
+              <label>Encryption Algorithm</label>
+              <select id="adv-algo" disabled style="width:100%; padding:0.5rem; background:var(--surface); border:2px solid var(--border); color:var(--text); font-family:monospace; font-weight:bold;">
+                <option value="AES-GCM" selected>AES-256-GCM (Hardware Accelerated)</option>
+                <option value="Argon2id">Argon2id (Coming soon)</option>
+              </select>
+            </div>
+          </div>
+        </details>
 
         <!-- Encrypt Button -->
-        <button class="btn btn-primary btn-full" id="enc-btn" onclick="encryptFile()" style="margin-top:.5rem;">
+        <button class="btn btn-primary btn-full" id="enc-btn" onclick="encryptFile()" style="margin-top:1rem;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round" style="width:16px;height:16px;">
             <rect x="3" y="11" width="18" height="11" rx="2" />
@@ -663,13 +308,14 @@
           Encrypt &amp; Generate Vault File
         </button>
 
-        <!-- Progress -->
-        <div class="progress-wrap" id="enc-progress">
+        <!-- Progress (Glitch Terminal) -->
+        <div class="progress-wrap terminal" id="enc-progress">
           <div class="progress-label" id="enc-progress-label">Encrypting…</div>
           <div class="progress-bar-bg">
             <div class="progress-bar-fill" id="enc-progress-fill"></div>
           </div>
-          <div class="progress-info" id="enc-progress-info">Deriving key from password (PBKDF2)…</div>
+          <div class="progress-info" id="enc-progress-info">Initializing crypto worker…</div>
+          <div class="terminal-overlay"></div>
         </div>
 
         <!-- Error -->
@@ -692,60 +338,16 @@
             </svg>
           </div>
           <div class="result-info">
-            <div class="r-title">Vault Created Successfully!</div>
-            <div class="r-sub">Your file has been encrypted. Download it below.</div>
+            <div class="r-title">Vault Created!</div>
             <div class="result-filename mono" id="enc-result-name"></div>
           </div>
-          <button class="btn btn-primary" id="enc-download-btn" onclick="downloadEncrypted()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:15px;height:15px;">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download
-          </button>
-        </div>
-
-        <!-- Format guide -->
-        <div class="format-guide" style="margin-top:1.75rem;">
-          <div class="format-guide-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;">
-              <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-            </svg>
-            Vault File Format (Binary Structure)
-          </div>
-          <div class="format-bytes">
-            <div class="byte-block bb-magic">
-              <div class="bval">VLTFY</div>
-              <div class="blbl">Magic (5B)</div>
-            </div>
-            <div class="byte-block bb-ver">
-              <div class="bval">v1</div>
-              <div class="blbl">Version (1B)</div>
-            </div>
-            <div class="byte-block bb-salt">
-              <div class="bval">Salt</div>
-              <div class="blbl">PBKDF2 (32B)</div>
-            </div>
-            <div class="byte-block bb-iv">
-              <div class="bval">IV</div>
-              <div class="blbl">AES-GCM (12B)</div>
-            </div>
-            <div class="byte-block bb-meta">
-              <div class="bval">MetaLen</div>
-              <div class="blbl">4B uint32</div>
-            </div>
-            <div class="byte-block bb-meta">
-              <div class="bval">Meta JSON</div>
-              <div class="blbl">encrypted</div>
-            </div>
-            <div class="byte-block bb-cipher">
-              <div class="bval">Ciphertext</div>
-              <div class="blbl">AES-256-GCM</div>
-            </div>
+          <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+            <button class="btn btn-primary" id="enc-download-btn" onclick="downloadEncrypted()">
+              ⬇️ Download
+            </button>
+            <button class="btn btn-teal" onclick="switchPage('share')">
+              📡 P2P Share
+            </button>
           </div>
         </div>
       </div>
@@ -765,22 +367,14 @@
           Decrypt &amp; View
           <span class="tag tag-green">Offline Ready</span>
         </div>
-        <p class="card-sub">Open any vault file (any custom extension like .yowtf, .iamboss, etc.) using the password
-          you set when encrypting it.</p>
+        <p class="card-sub">Open any vault file you or someone else encrypted.</p>
 
         <!-- Drop Zone -->
         <div class="field-group">
-          <label>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;">
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-            </svg>
-            Vault File
-          </label>
+          <label>Vault File</label>
           <div class="drop-zone" id="dec-drop" ondragover="handleDrag(event,'dec-drop')"
             ondragleave="handleDragLeave(event,'dec-drop')" ondrop="handleDrop(event,'dec')">
-            <input type="file" id="dec-file-input" onchange="handleDecFileChange()" />
+            <input type="file" id="dec-file-input" onchange="handleDecFileChange(event)" />
             <div class="drop-icon" id="dec-drop-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                 stroke-linejoin="round" style="width:40px;height:40px;color:var(--text3);">
@@ -788,21 +382,14 @@
                 <path d="M7 11V7a5 5 0 0 1 9.9-1" />
               </svg>
             </div>
-            <div class="drop-title" id="dec-drop-title">Drop your vault file here or click to browse</div>
-            <div class="drop-hint" id="dec-drop-hint">Any extension you created: .yowtf, .iamboss, etc.</div>
+            <div class="drop-title" id="dec-drop-title">Drop your vault file here</div>
+            <div class="drop-hint" id="dec-drop-hint">Any custom extension: .yowtf, .myvault, etc.</div>
           </div>
         </div>
 
         <!-- Password -->
         <div class="field-group">
-          <label>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-1px;">
-              <path
-                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-            </svg>
-            Your Password
-          </label>
+          <label>Your Password</label>
           <div class="field-row">
             <input type="password" id="dec-pw" placeholder="Enter the password used when encrypting…" />
             <button class="btn btn-teal" style="flex-shrink:0;padding:.7rem 1rem;" onclick="togglePw('dec-pw', this)"
@@ -817,32 +404,21 @@
         </div>
 
         <button class="btn btn-teal btn-full" id="dec-btn" onclick="decryptFile()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" style="width:16px;height:16px;">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-          </svg>
           Decrypt &amp; View File
         </button>
 
         <!-- Progress -->
-        <div class="progress-wrap" id="dec-progress">
+        <div class="progress-wrap terminal" id="dec-progress">
           <div class="progress-label" id="dec-progress-label">Decrypting…</div>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" id="dec-progress-fill"
-              style="background:linear-gradient(90deg,var(--teal),var(--accent))"></div>
+            <div class="progress-bar-fill" id="dec-progress-fill" style="background:var(--teal)"></div>
           </div>
           <div class="progress-info" id="dec-progress-info">Deriving key from password…</div>
+          <div class="terminal-overlay"></div>
         </div>
 
         <!-- Error -->
         <div class="error-box" id="dec-error">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
           <span id="dec-error-text"></span>
         </div>
 
@@ -853,31 +429,22 @@
               <div class="fname" id="viewer-fname"></div>
               <div class="fsize" id="viewer-fsize"></div>
             </div>
-            <div class="viewer-actions">
+            <div class="viewer-actions" style="display:flex; align-items:center; gap:1rem;">
+              <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.8rem;color:var(--text2);cursor:pointer;" title="Wipe file from memory when closed">
+                <input type="checkbox" id="self-destruct-cb" checked>
+                <span>Self-Destruct</span>
+              </label>
               <button class="btn btn-teal" id="viewer-download-btn" onclick="downloadDecrypted()"
                 style="padding:.45rem .9rem;font-size:.8rem;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" style="width:14px;height:14px;">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Save File
+                ⬇️ Save File
+              </button>
+              <button class="btn btn-primary" onclick="closeViewer()"
+                style="padding:.45rem .9rem;font-size:.8rem;background:var(--red);border-color:var(--red);">
+                ✖ Close
               </button>
             </div>
           </div>
-          <div class="viewer-content" id="viewer-content">
-            <div class="viewer-msg">
-              <div class="vm-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" style="width:32px;height:32px;">
-                  <rect x="3" y="11" width="18" height="11" rx="2" />
-                  <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-                </svg>
-              </div>
-              <div class="vm-text">Decrypted file will appear here</div>
-            </div>
-          </div>
+          <div class="viewer-content" id="viewer-content"></div>
         </div>
       </div>
     </div>
@@ -896,670 +463,195 @@
           </div>
           How Vaultify Works
         </div>
-        <p class="card-sub">A deep dive into the security model, format design, and offline capabilities.</p>
-
-        <div class="info-grid">
+        <div class="info-grid" style="margin-bottom: 2rem;">
           <div class="info-card ok-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              AES-256-GCM Encryption
-            </h3>
-            <p>Every file is encrypted using AES-256-GCM — the same military-grade standard used by banks and
-              governments. Without the exact password, the data is mathematically impossible to read.</p>
+            <h3>AES-256-GCM</h3>
+            <p>Every file is encrypted using AES-256-GCM — the same military-grade standard used by banks and governments.</p>
           </div>
           <div class="info-card ok-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path
-                  d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-              </svg>
-              PBKDF2 Key Derivation
-            </h3>
-            <p>Your password is never stored. It's stretched into a 256-bit key using PBKDF2 with 250,000 iterations + a
-              random salt, making brute-force attacks extremely slow.</p>
+            <h3>Web Workers & PBKDF2</h3>
+            <p>Passwords are stretched via PBKDF2 with up to 250,000 iterations inside a background Web Worker so the UI never freezes.</p>
           </div>
           <div class="info-card accent-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-                <line x1="7" y1="7" x2="7.01" y2="7" />
-              </svg>
-              Custom Extensions
-            </h3>
-            <p>The extension (<code>.yowtf</code>, <code>.iamboss</code>, etc.) is just a human label — it doesn't
-              change security. Inside, every vault file has the magic bytes <code>VLTFY</code> so Vaultify always
-              recognizes it.</p>
+            <h3>100% Offline PWA</h3>
+            <p>Vaultify is a Progressive Web App. Install it on your phone or desktop to use it completely offline with zero server contact.</p>
           </div>
           <div class="info-card accent-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path
-                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-              </svg>
-              Zero Server Storage
-            </h3>
-            <p>All encryption/decryption runs in your browser using the Web Crypto API. Nothing is sent to any server.
-              Your files never leave your device. Log your network tab — you'll see zero uploads.</p>
-          </div>
-          <div class="info-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <line x1="1" y1="1" x2="23" y2="23" />
-                <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
-                <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
-              </svg>
-              Offline Capable
-            </h3>
-            <p>Save this HTML file to your computer. Open it without internet. Everything still works because all logic
-              is embedded in this single file — no CDN calls except Google Fonts on first load.</p>
-          </div>
-          <div class="info-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-              </svg>
-              Format Integrity
-            </h3>
-            <p>Even if someone knows the custom extension and sees the file, they cannot read it. The ciphertext is
-              completely opaque without the password. AES-GCM also detects tampering.</p>
-          </div>
-          <div class="info-card warn-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              Forget Your Password?
-            </h3>
-            <p>There is no password recovery. No reset. No backdoor. If you lose your password, the data is permanently
-              unrecoverable — by design. Store your password in a password manager.</p>
-          </div>
-          <div class="info-card warn-card">
-            <h3>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" style="width:15px;height:15px;">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              Large Files
-            </h3>
-            <p>This runs in the browser — very large files (&gt;500 MB) may be slow or hit memory limits depending on
-              your device. For best results, keep files under 200 MB.</p>
+            <h3>Steganography</h3>
+            <p>Hide your encrypted vaults in plain sight by appending them to innocent-looking PNG images.</p>
           </div>
         </div>
 
-        <div class="divider"></div>
+        <article class="seo-content" style="color:var(--text2); font-size: 0.95rem; line-height: 1.6;">
+          <h2 style="color:var(--text); margin-bottom: 1rem; font-size: 1.3rem;">Secure Offline File Encryption & Steganography</h2>
+          <p style="margin-bottom: 1rem;">
+            <strong>Vaultify</strong> is a privacy-first, client-side utility designed to provide military-grade file encryption directly in your web browser. Unlike traditional cloud storage services, Vaultify operates completely offline. No files are ever uploaded to a server, ensuring absolute zero-knowledge privacy.
+          </p>
+          
+          <h3 style="color:var(--text); margin-bottom: 0.5rem; font-size: 1.1rem; margin-top: 1.5rem;">How to Use Vaultify</h3>
+          <p style="margin-bottom: 1rem;">
+            Using Vaultify is incredibly simple. To encrypt files, simply drag and drop them onto the screen. You can drop individual files or entire folders—Vaultify will automatically zip multiple files using an optimized client-side compression algorithm before encrypting them with a secure password using <strong>AES-256-GCM</strong> and <strong>PBKDF2</strong> key derivation.
+          </p>
 
-        <div class="format-guide">
-          <div class="format-guide-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-              stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-            Technical Binary Format
-          </div>
-          <div style="font-size:.82rem;color:var(--text2);line-height:1.7;margin-bottom:1rem;">
-            Every vault file — regardless of extension — follows this exact binary layout:
-          </div>
-          <div class="format-bytes" style="margin-bottom:1rem;">
-            <div class="byte-block bb-magic">
-              <div class="bval">56 4C 54 46 59</div>
-              <div class="blbl">Magic "VLTFY" (5B)</div>
-            </div>
-            <div class="byte-block bb-ver">
-              <div class="bval">01</div>
-              <div class="blbl">Format v1 (1B)</div>
-            </div>
-            <div class="byte-block bb-salt">
-              <div class="bval">random×32</div>
-              <div class="blbl">PBKDF2 Salt (32B)</div>
-            </div>
-            <div class="byte-block bb-iv">
-              <div class="bval">random×12</div>
-              <div class="blbl">AES-GCM IV (12B)</div>
-            </div>
-            <div class="byte-block bb-meta">
-              <div class="bval">uint32-LE</div>
-              <div class="blbl">Meta length (4B)</div>
-            </div>
-            <div class="byte-block bb-meta">
-              <div class="bval">AES-GCM</div>
-              <div class="blbl">Enc. JSON meta</div>
-            </div>
-            <div class="byte-block bb-cipher">
-              <div class="bval">AES-256-GCM</div>
-              <div class="blbl">Encrypted payload</div>
-            </div>
-          </div>
-          <div style="font-size:.78rem;color:var(--text3);line-height:1.6;">
-            The meta JSON contains: <code
-              style="color:var(--text)">{ originalName, mimeType, originalSize, createdAt, vaultifyVersion }</code>
-          </div>
-        </div>
+          <h3 style="color:var(--text); margin-bottom: 0.5rem; font-size: 1.1rem; margin-top: 1.5rem;">Image Steganography & Custom Formats</h3>
+          <p style="margin-bottom: 1rem;">
+            For maximum privacy, Vaultify features <strong>Steganography Mode</strong>. This allows you to disguise your encrypted vault as a standard PNG image. To anyone else, it looks and acts like a normal picture, but when dropped back into the Vaultify decryption engine, it extracts your original hidden data. You can also export your encrypted files using any custom file extension (e.g., <code>.myvault</code>) to avoid standard file scrapers.
+          </p>
+
+          <h3 style="color:var(--text); margin-bottom: 0.5rem; font-size: 1.1rem; margin-top: 1.5rem;">Self-Destruct Memory Wiping</h3>
+          <p>
+            When you decrypt a file, Vaultify's advanced browser viewer allows you to open images, PDFs, and videos instantly without downloading them. When you're done, simply hit the Close button with <strong>Self-Destruct</strong> enabled, and Vaultify will securely wipe the decrypted data from your browser's memory, leaving absolutely no trace of your sensitive files on the device.
+          </p>
+        </article>
       </div>
     </div>
 
   </main>
 
-  <footer>
-    Made by <span>Vaultify</span> — Zero servers, zero tracking, zero compromise.
-    <div class="dev-info">
-      <span class="dev-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
-        <span style="color:var(--text2)">Srinivas Jangiti</span>
-      </span>
-      <span class="dev-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path
-            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.03z" />
-        </svg>
-        <a href="tel:8767505121" style="color:var(--text2)">8767505121</a>
-      </span>
-      <span class="dev-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-          <polyline points="22,6 12,13 2,6" />
-        </svg>
-        <a href="mailto:srinivasajangiti@gmail.com" style="color:var(--text2)">srinivasajangiti@gmail.com</a>
-      </span>
+  <!-- FULLSCREEN MODAL -->
+  <div class="fs-modal" id="fs-modal">
+    <div class="fs-toolbar">
+      <span class="fs-title" id="fs-title">Filename.ext</span>
+      <button class="btn btn-outline" style="border:none;color:#fff;" onclick="closeFullscreen()">✕ Close</button>
     </div>
+    <div class="fs-content" id="fs-content"></div>
+  </div>
+
+  <footer>
+    Made by <span>Vaultify</span> — Zero servers, zero tracking, zero compromise.<br><br>
+    Created by <span>Srinivas Jangiti</span>
   </footer>
 
-  <script>
-    // ════════════════════════════════════════════════════════════
-    //  VAULTIFY — Client-Side Encrypted Vault with Custom Format
-    //  All cryptography via Web Crypto API (AES-256-GCM + PBKDF2)
-    // ════════════════════════════════════════════════════════════
+  <script id="crypto-worker" type="javascript/worker">
+const MAGIC = [0x56, 0x4C, 0x54, 0x46, 0x59]; // "VLTFY"
+const FORMAT_VER = 0x01;
+const SALT_LEN = 32;
+const IV_LEN = 12;
 
-    const MAGIC = [0x56, 0x4C, 0x54, 0x46, 0x59]; // "VLTFY"
-    const FORMAT_VER = 0x01;
-    const PBKDF2_ITERS = 250_000;
-    const SALT_LEN = 32;
-    const IV_LEN = 12;
+async function deriveKey(password, salt, iters) {
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey(
+    'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: iters, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt']
+  );
+}
 
-    // ── State ──
-    let encFile = null;
-    let decFile = null;
-    let encryptedBlob = null;
-    let decryptedBlob = null;
-    let decryptedName = '';
-    let decryptedMime = '';
-    let objectUrls = [];
-
-    // ── Page Switching ──
-    function switchPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('page-' + id).classList.add('active');
-      document.getElementById('tab-' + id).classList.add('active');
-      if (id !== 'encrypt') document.getElementById('hero-section').style.display = 'none';
-      else document.getElementById('hero-section').style.display = '';
-    }
-
-    // ── Toast ──
-    function toast(msg, type = 'success') {
-      const t = document.getElementById('toast');
-      const icon = type === 'error'
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--red);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--text);flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`;
-      t.innerHTML = icon + ' ' + msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
-    }
-
-    // ── Password Visibility ──
-    const EYE_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-    const EYE_CLOSED = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
-    function togglePw(id, btn) {
-      const el = document.getElementById(id);
-      if (el.type === 'password') { el.type = 'text'; btn.innerHTML = EYE_CLOSED; }
-      else { el.type = 'password'; btn.innerHTML = EYE_OPEN; }
-    }
-
-    function generatePassword() {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-      let password = "";
-      const array = new Uint32Array(20); // 20 chars long
-      window.crypto.getRandomValues(array);
-      for (let i = 0; i < array.length; i++) {
-        password += chars[array[i] % chars.length];
-      }
+self.onmessage = async (e) => {
+  const { type, fileData, password, metaObj, iters } = e.data;
+  
+  try {
+    if (type === 'encrypt') {
+      self.postMessage({ type: 'progress', pct: 25, label: 'Generating salt & IV…', info: 'Generating cryptographic random values…' });
+      const salt = crypto.getRandomValues(new Uint8Array(SALT_LEN));
+      const iv = crypto.getRandomValues(new Uint8Array(IV_LEN));
       
-      const pwField = document.getElementById('enc-pw');
-      pwField.value = password;
-      pwField.type = "text"; 
-      updateStrength(password);
+      self.postMessage({ type: 'progress', pct: 40, label: 'Deriving key (PBKDF2)…', info: `Running ${iters.toLocaleString()} iterations — this may take a moment…` });
+      const key = await deriveKey(password, salt, iters);
       
-      const toggleBtn = document.getElementById('enc-pw-toggle');
-      toggleBtn.innerHTML = EYE_CLOSED;
+      self.postMessage({ type: 'progress', pct: 65, label: 'Encrypting payload…', info: 'AES-256-GCM encrypting your file…' });
+      const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, fileData);
       
-      showToast('SECURE PASSWORD GENERATED');
-    }
-
-    // ── Extension Sanitize & Chips ──
-    function sanitizeExt(el) {
-      el.value = el.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-    }
-    function setExt(val) {
-      document.getElementById('enc-ext').value = val;
-    }
-
-    // ── Password Strength ──
-    function updateStrength(pw) {
-      const fill = document.getElementById('pw-fill');
-      const label = document.getElementById('pw-label');
-      let score = 0;
-      if (pw.length >= 8) score++;
-      if (pw.length >= 14) score++;
-      if (/[A-Z]/.test(pw)) score++;
-      if (/[0-9]/.test(pw)) score++;
-      if (/[^a-zA-Z0-9]/.test(pw)) score++;
-      const pct = Math.round((score / 5) * 100);
-      const colors = ['#ff4757', '#ff4757', '#ffd166', '#ffd166', '#00e676', '#00e676'];
-      const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
-      fill.style.width = pct + '%';
-      fill.style.background = colors[score] || '#00e676';
-      label.textContent = labels[score] || 'Very Strong';
-      label.style.color = colors[score] || '#00e676';
-    }
-
-    // ── Drag & Drop ──
-    function handleDrag(e, id) {
-      e.preventDefault();
-      document.getElementById(id).classList.add('drag-over');
-    }
-    function handleDragLeave(e, id) {
-      document.getElementById(id).classList.remove('drag-over');
-    }
-    function handleDrop(e, type) {
-      e.preventDefault();
-      const id = type === 'enc' ? 'enc-drop' : 'dec-drop';
-      document.getElementById(id).classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (!file) return;
-      if (type === 'enc') { document.getElementById('enc-file-input').files = e.dataTransfer.files; setEncFile(file); }
-      else { document.getElementById('dec-file-input').files = e.dataTransfer.files; setDecFile(file); }
-    }
-    function handleEncFileChange() {
-      const f = document.getElementById('enc-file-input').files[0];
-      if (f) setEncFile(f);
-    }
-    function handleDecFileChange() {
-      const f = document.getElementById('dec-file-input').files[0];
-      if (f) setDecFile(f);
-    }
-    function setEncFile(f) {
-      encFile = f;
-      document.getElementById('enc-drop-icon').innerHTML = fileIconSVG(f.name);
-      document.getElementById('enc-drop-title').textContent = f.name;
-      document.getElementById('enc-drop-hint').textContent = fmtSize(f.size) + ' — ' + (f.type || 'Unknown type');
-      hideEl('enc-result'); hideEl('enc-error');
-      toast(f.name + ' selected');
-    }
-    function setDecFile(f) {
-      decFile = f;
-      document.getElementById('dec-drop-icon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
-      document.getElementById('dec-drop-title').textContent = f.name;
-      document.getElementById('dec-drop-hint').textContent = fmtSize(f.size);
-      hideEl('dec-error'); hideEl('viewer-wrap');
-      toast(f.name + ' selected');
-    }
-
-    // ── Utils ──
-    function fmtSize(b) {
-      if (b < 1024) return b + ' B';
-      if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
-      return (b / 1048576).toFixed(2) + ' MB';
-    }
-    function fileIcon(name) {
-      const ext = name.split('.').pop().toLowerCase();
-      const map = {
-        pdf: '📄', doc: '📝', docx: '📝', xls: '📊', xlsx: '📊', ppt: '📋', pptx: '📋',
-        mp4: '🎬', mkv: '🎬', avi: '🎬', mov: '🎬', mp3: '🎵', wav: '🎵', flac: '🎵', ogg: '🎵',
-        jpg: '🖼️', jpeg: '🖼️', png: '🖼️', gif: '🖼️', webp: '🖼️', svg: '🖼️',
-        zip: '📦', rar: '📦', tar: '📦', gz: '📦',
-        txt: '📃', md: '📃', json: '📋', csv: '📊', html: '🌐', js: '💻', py: '🐍'
-      };
-      return map[ext] || '📁';
-    }
-    function fileIconSVG(name) {
-      const ext = name.split('.').pop().toLowerCase();
-      // SVG icon paths keyed by category
-      const video = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`;
-      const audio = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
-      const image = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
-      const doc = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`;
-      const zip = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`;
-      const code = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`;
-      const generic = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;color:var(--text);"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`;
-      const catMap = {
-        mp4: video, mkv: video, avi: video, mov: video,
-        mp3: audio, wav: audio, flac: audio, ogg: audio,
-        jpg: image, jpeg: image, png: image, gif: image, webp: image, svg: image,
-        pdf: doc, doc: doc, docx: doc, xls: doc, xlsx: doc, ppt: doc, pptx: doc, txt: doc, md: doc,
-        zip: zip, rar: zip, tar: zip, gz: zip,
-        js: code, ts: code, py: code, html: code, css: code, json: code, csv: code
-      };
-      return catMap[ext] || generic;
-    }
-    function showEl(id) { document.getElementById(id).classList.add('show'); }
-    function hideEl(id) { document.getElementById(id).classList.remove('show'); }
-
-    function encErrMsg(msg) {
-      document.getElementById('enc-error-text').textContent = msg;
-      showEl('enc-error');
-    }
-    function decErrMsg(msg) {
-      document.getElementById('dec-error-text').textContent = msg;
-      showEl('dec-error');
-    }
-
-    // ── Key Derivation ──
-    async function deriveKey(password, salt) {
-      const enc = new TextEncoder();
-      const baseKey = await crypto.subtle.importKey(
-        'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveKey']
+      self.postMessage({ type: 'progress', pct: 80, label: 'Encrypting metadata…', info: 'Encrypting file info…' });
+      const metaIV = crypto.getRandomValues(new Uint8Array(IV_LEN));
+      const metaCipher = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: metaIV },
+        key,
+        new TextEncoder().encode(JSON.stringify(metaObj))
       );
-      return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERS, hash: 'SHA-256' },
-        baseKey,
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['encrypt', 'decrypt']
+      
+      self.postMessage({ type: 'progress', pct: 90, label: 'Assembling vault file…', info: 'Building binary format…' });
+      const metaCipherBuf = new Uint8Array(metaCipher);
+      const payloadBuf = new Uint8Array(ciphertext);
+      const metaLenBuf = new Uint8Array(4);
+      new DataView(metaLenBuf.buffer).setUint32(0, metaCipherBuf.length, true);
+      
+      const total = new Uint8Array(
+        5 + 1 + SALT_LEN + IV_LEN + IV_LEN + 4 + metaCipherBuf.length + payloadBuf.length
       );
-    }
-
-    // ── Progress helpers ──
-    function encProgress(pct, label, info) {
-      document.getElementById('enc-progress-fill').style.width = pct + '%';
-      if (label) document.getElementById('enc-progress-label').textContent = label;
-      if (info) document.getElementById('enc-progress-info').textContent = info;
-    }
-    function decProgress(pct, label, info) {
-      document.getElementById('dec-progress-fill').style.width = pct + '%';
-      if (label) document.getElementById('dec-progress-label').textContent = label;
-      if (info) document.getElementById('dec-progress-info').textContent = info;
-    }
-
-    // ════════════════════════════ ENCRYPT ════════════════════════════
-    async function encryptFile() {
-      hideEl('enc-error'); hideEl('enc-result');
-
-      if (!encFile) return encErrMsg('Please select a file first.');
-      const ext = document.getElementById('enc-ext').value.trim();
-      if (!ext) return encErrMsg('Please set a custom extension.');
-      const pw = document.getElementById('enc-pw').value;
-      const pw2 = document.getElementById('enc-pw2').value;
-      if (!pw) return encErrMsg('Please enter a password.');
-      if (pw !== pw2) return encErrMsg('Passwords do not match.');
-      if (pw.length < 6) return encErrMsg('Password must be at least 6 characters.');
-
-      showEl('enc-progress');
-      document.getElementById('enc-btn').disabled = true;
-      encryptedBlob = null;
-
-      try {
-        encProgress(10, 'Reading file…', 'Loading file into memory…');
-        const fileData = await encFile.arrayBuffer();
-
-        encProgress(25, 'Generating salt & IV…', 'Generating cryptographic random values…');
-        const salt = crypto.getRandomValues(new Uint8Array(SALT_LEN));
-        const iv = crypto.getRandomValues(new Uint8Array(IV_LEN));
-
-        encProgress(40, 'Deriving key (PBKDF2)…', `Running ${PBKDF2_ITERS.toLocaleString()} iterations — this may take a moment…`);
-        const key = await deriveKey(pw, salt);
-
-        encProgress(65, 'Encrypting payload…', 'AES-256-GCM encrypting your file…');
-        const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, fileData);
-
-        encProgress(80, 'Encrypting metadata…', 'Encrypting file name and type…');
-        // Separate IV for metadata
-        const metaIV = crypto.getRandomValues(new Uint8Array(IV_LEN));
-        const metaObj = JSON.stringify({
-          originalName: encFile.name,
-          mimeType: encFile.type || 'application/octet-stream',
-          originalSize: encFile.size,
-          createdAt: new Date().toISOString(),
-          vaultifyVersion: '1.0'
-        });
-        const metaCipher = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: metaIV },
-          key,
-          new TextEncoder().encode(metaObj)
-        );
-
-        encProgress(90, 'Assembling vault file…', 'Building binary format…');
-
-        // Build file:
-        // [MAGIC(5)] [VER(1)] [SALT(32)] [IV(12)] [META_IV(12)]
-        // [META_LEN(4)] [META_CIPHER(n)] [PAYLOAD_IV(12 — already included in 'iv'... wait we use the same iv above)]
-        // Actually: MAGIC VER SALT PAYLOAD_IV META_IV META_LEN META_CIPHER PAYLOAD_CIPHER
-
-        const metaCipherBuf = new Uint8Array(metaCipher);
-        const payloadBuf = new Uint8Array(ciphertext);
-
-        // Header: MAGIC(5) + VER(1) + SALT(32) + PAYLOAD_IV(12) + META_IV(12) = 62 bytes
-        // Then: META_LEN(4 LE) + META_CIPHER + PAYLOAD
-        const metaLenBuf = new Uint8Array(4);
-        new DataView(metaLenBuf.buffer).setUint32(0, metaCipherBuf.length, true);
-
-        const total = new Uint8Array(
-          5 + 1 + SALT_LEN + IV_LEN + IV_LEN + 4 + metaCipherBuf.length + payloadBuf.length
-        );
-        let off = 0;
-        total.set(MAGIC, off); off += 5;
-        total[off] = FORMAT_VER; off += 1;
-        total.set(salt, off); off += SALT_LEN;
-        total.set(iv, off); off += IV_LEN;
-        total.set(metaIV, off); off += IV_LEN;
-        total.set(metaLenBuf, off); off += 4;
-        total.set(metaCipherBuf, off); off += metaCipherBuf.length;
-        total.set(payloadBuf, off);
-
-        encryptedBlob = new Blob([total], { type: 'application/octet-stream' });
-        const outName = encFile.name.replace(/\.[^/.]+$/, '') + (ext.startsWith('.') ? ext : '.' + ext);
-
-        encProgress(100, 'Done!', 'Vault file ready to download.');
-
-        document.getElementById('enc-result-name').textContent = outName;
-        showEl('enc-result');
-        toast('Vault created! ' + outName);
-        encryptedBlob._filename = outName;
-
-      } catch (e) {
-        encErrMsg('Encryption failed: ' + e.message);
-        console.error(e);
-      } finally {
-        document.getElementById('enc-btn').disabled = false;
-        setTimeout(() => hideEl('enc-progress'), 1500);
-      }
-    }
-
-    function downloadEncrypted() {
-      if (!encryptedBlob) return;
-      const url = URL.createObjectURL(encryptedBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = encryptedBlob._filename || 'vaultify.vault';
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 3000);
-      toast('Downloading ' + a.download);
-    }
-
-    // ════════════════════════════ DECRYPT ════════════════════════════
-    async function decryptFile() {
-      hideEl('dec-error'); hideEl('viewer-wrap');
-      revokeAll();
-
-      if (!decFile) return decErrMsg('Please select a vault file first.');
-      const pw = document.getElementById('dec-pw').value;
-      if (!pw) return decErrMsg('Please enter the password.');
-
-      showEl('dec-progress');
-      document.getElementById('dec-btn').disabled = true;
-      decryptedBlob = null;
-
-      try {
-        decProgress(10, 'Reading vault file…', 'Loading vault into memory…');
-        const buf = await decFile.arrayBuffer();
-        const data = new Uint8Array(buf);
-
-        // Verify magic
-        decProgress(20, 'Verifying magic bytes…', 'Checking VLTFY signature…');
-        const magicOK = MAGIC.every((b, i) => data[i] === b);
-        if (!magicOK) throw new Error('This does not appear to be a valid Vaultify vault file. Wrong file or corrupted.');
-
-        const ver = data[5];
-        if (ver !== FORMAT_VER) throw new Error('Unsupported vault format version: ' + ver);
-
-        // Parse header
-        let off = 6;
-        const salt = data.slice(off, off + SALT_LEN); off += SALT_LEN;
-        const iv = data.slice(off, off + IV_LEN); off += IV_LEN;
-        const metaIV = data.slice(off, off + IV_LEN); off += IV_LEN;
-        const metaLen = new DataView(data.buffer, off, 4).getUint32(0, true); off += 4;
-        const metaCipher = data.slice(off, off + metaLen); off += metaLen;
-        const payload = data.slice(off);
-
-        decProgress(40, 'Deriving key (PBKDF2)…', `Running ${PBKDF2_ITERS.toLocaleString()} iterations…`);
-        const key = await deriveKey(pw, salt);
-
-        decProgress(65, 'Decrypting metadata…', 'Recovering file info…');
-        let meta;
-        try {
-          const metaPlain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: metaIV }, key, metaCipher);
-          meta = JSON.parse(new TextDecoder().decode(metaPlain));
-        } catch {
-          throw new Error('Wrong password or corrupted vault. Cannot decrypt.');
+      let off = 0;
+      total.set(MAGIC, off); off += 5;
+      total[off] = FORMAT_VER; off += 1;
+      total.set(salt, off); off += SALT_LEN;
+      total.set(iv, off); off += IV_LEN;
+      total.set(metaIV, off); off += IV_LEN;
+      total.set(metaLenBuf, off); off += 4;
+      total.set(metaCipherBuf, off); off += metaCipherBuf.length;
+      total.set(payloadBuf, off);
+      
+      self.postMessage({ type: 'done', result: total.buffer }, [total.buffer]);
+      
+    } else if (type === 'decrypt') {
+      const data = new Uint8Array(fileData);
+      self.postMessage({ type: 'progress', pct: 20, label: 'Verifying magic bytes…', info: 'Scanning for VLTFY signature…' });
+      
+      let startOff = -1;
+      for (let i = 0; i < data.length - 5; i++) {
+        if (data[i] === 0x56 && data[i+1] === 0x4C && data[i+2] === 0x54 && data[i+3] === 0x46 && data[i+4] === 0x59) {
+          startOff = i;
+          break;
         }
-
-        decProgress(80, 'Decrypting payload…', 'Recovering your original file…');
-        let plain;
-        try {
-          plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, payload);
-        } catch {
-          throw new Error('Wrong password or corrupted payload.');
-        }
-
-        decProgress(95, 'Preparing viewer…', 'Rendering file…');
-        decryptedBlob = new Blob([plain], { type: meta.mimeType });
-        decryptedName = meta.originalName;
-        decryptedMime = meta.mimeType;
-
-        document.getElementById('viewer-fname').textContent = meta.originalName;
-        document.getElementById('viewer-fsize').textContent =
-          fmtSize(meta.originalSize) + ' · ' + meta.mimeType + ' · Encrypted ' + new Date(meta.createdAt).toLocaleString();
-
-        renderViewer(decryptedBlob, meta);
-        decProgress(100, 'Decrypted!', 'File ready.');
-        showEl('viewer-wrap');
-        toast(meta.originalName + ' decrypted!');
-
-      } catch (e) {
-        decErrMsg(e.message);
-        console.error(e);
-      } finally {
-        document.getElementById('dec-btn').disabled = false;
-        setTimeout(() => hideEl('dec-progress'), 1500);
       }
-    }
-
-    function revokeAll() {
-      objectUrls.forEach(u => URL.revokeObjectURL(u));
-      objectUrls = [];
-    }
-    function mkUrl(blob) {
-      const u = URL.createObjectURL(blob);
-      objectUrls.push(u);
-      return u;
-    }
-
-    function renderViewer(blob, meta) {
-      const content = document.getElementById('viewer-content');
-      content.innerHTML = '';
-      const mime = meta.mimeType || '';
-      const url = mkUrl(blob);
-
-      if (mime.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = url; img.alt = meta.originalName;
-        content.appendChild(img);
-
-      } else if (mime.startsWith('video/')) {
-        const vid = document.createElement('video');
-        vid.src = url; vid.controls = true; vid.autoplay = false;
-        content.appendChild(vid);
-
-      } else if (mime.startsWith('audio/')) {
-        const aud = document.createElement('audio');
-        aud.src = url; aud.controls = true;
-        const wrap = document.createElement('div');
-        wrap.style.cssText = 'text-align:center;padding:3rem 1rem;';
-        wrap.innerHTML = '<div style="font-size:4rem;margin-bottom:1rem">🎵</div><div style="color:var(--text2);font-size:.9rem;margin-bottom:1rem">' + meta.originalName + '</div>';
-        wrap.appendChild(aud);
-        content.appendChild(wrap);
-
-      } else if (mime === 'application/pdf') {
-        const iframe = document.createElement('iframe');
-        iframe.src = url + '#toolbar=0';
-        iframe.title = meta.originalName;
-        content.appendChild(iframe);
-
-      } else if (mime.startsWith('text/') || mime === 'application/json') {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const pre = document.createElement('pre');
-          pre.textContent = e.target.result;
-          content.innerHTML = '';
-          content.appendChild(pre);
-        };
-        reader.readAsText(blob);
-
-      } else {
-        // Fallback: cannot preview, offer download
-        content.innerHTML = `
-      <div class="viewer-msg">
-        <div class="vm-icon">${fileIcon(meta.originalName)}</div>
-        <div class="vm-text" style="margin-bottom:.5rem;font-size:1rem;font-weight:600;color:var(--text)">${meta.originalName}</div>
-        <div class="vm-text" style="margin-bottom:1.5rem">This file type (<code style="color:var(--text)">${mime || 'unknown'}</code>) cannot be previewed in the browser.<br/>Click the button below to download and open it with your local app.</div>
-        <button class="btn btn-primary" onclick="downloadDecrypted()">⬇️ Download & Open Locally</button>
-      </div>`;
+      
+      if (startOff === -1) throw new Error('This does not appear to be a valid Vaultify vault file. Wrong file or corrupted.');
+      
+      const vaultData = data.slice(startOff);
+      const ver = vaultData[5];
+      if (ver !== FORMAT_VER) throw new Error('Unsupported vault format version: ' + ver);
+      
+      let off = 6;
+      const salt = vaultData.slice(off, off + SALT_LEN); off += SALT_LEN;
+      const iv = vaultData.slice(off, off + IV_LEN); off += IV_LEN;
+      const metaIV = vaultData.slice(off, off + IV_LEN); off += IV_LEN;
+      const metaLen = new DataView(vaultData.buffer, vaultData.byteOffset + off, 4).getUint32(0, true); off += 4;
+      if (off + metaLen > vaultData.length) throw new Error('Corrupted vault file (meta length too large).');
+      const metaCipher = vaultData.slice(off, off + metaLen); off += metaLen;
+      const payload = vaultData.slice(off);
+      
+      self.postMessage({ type: 'progress', pct: 40, label: 'Deriving key (PBKDF2)…', info: `Running ${iters.toLocaleString()} iterations…` });
+      const key = await deriveKey(password, salt, iters);
+      
+      self.postMessage({ type: 'progress', pct: 65, label: 'Decrypting metadata…', info: 'Recovering file info…' });
+      let meta;
+      try {
+        const metaPlain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: metaIV }, key, metaCipher);
+        meta = JSON.parse(new TextDecoder().decode(metaPlain));
+      } catch {
+        throw new Error('Wrong password or corrupted vault. Cannot decrypt metadata.');
       }
+      
+      self.postMessage({ type: 'progress', pct: 80, label: 'Decrypting payload…', info: 'Recovering your original file…' });
+      let plain;
+      try {
+        plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, payload);
+      } catch {
+        throw new Error('Wrong password or corrupted payload.');
+      }
+      
+      self.postMessage({ type: 'done', result: plain, meta }, [plain]);
     }
-
-    function downloadDecrypted() {
-      if (!decryptedBlob) return;
-      const url = mkUrl(decryptedBlob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = decryptedName;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 3000);
-      toast('Saving ' + decryptedName);
-    }
-
-    // ensure fonts load even offline after first visit
-    // (fonts already embedded in the CSS request above — if offline after first open, cached)
+  } catch (e) {
+    self.postMessage({ type: 'error', error: e.message });
+  }
+};
   </script>
-</body>
 
+  <!-- HISTORY DRAWER -->
+  <div class="history-drawer" id="history-drawer">
+    <div class="history-header">
+      <h3 style="margin:0;font-size:1.1rem;color:var(--text);">Session History</h3>
+      <button onclick="toggleHistory()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.2rem;">✖</button>
+    </div>
+    <div id="history-list">
+      <div style="color:var(--text3);text-align:center;padding:2rem 0;font-family:'Space Mono',monospace;font-size:0.8rem;">No recent activity</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
 </html>
